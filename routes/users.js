@@ -15,10 +15,8 @@ routes.get("/watches", getAllWatches);
 routes.get("/watch-detail/:watchId", getWatchDetail);
 routes.get("/watch-image/:watchId", getWatchImage);
 routes.get("/watch-collections", getWatchCollections);
-routes.post("/create-fan", createFanAccount);
 routes.put("/fan-details/:id", getFanDetails);
 routes.put("/edit-fan/:id", editFanAccount);
-routes.get("/login", authenticateFanDetails)
 
 
 exports.routes = routes;

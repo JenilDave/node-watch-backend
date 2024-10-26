@@ -4,6 +4,15 @@ const Schema = mongoose.Schema;
 const watchCategorySchema = new Schema({
     watch_uid: {
         type: String
+    },
+    Casual: {
+        type: String
+    },
+    Business: {
+        type: String
+    },
+    Occasion: {
+        type: String
     }
 })
 

@@ -42,6 +42,7 @@ module.exports = {
     getMongoConnected,
     constants : {
         watches: "watches",
+        session_store: "session_store",
         mongo_collection_name: 'categories',
         readLimit: 10,
         mongo_url: MONGOURL

@@ -47,8 +47,8 @@ exports.addWatch = (req, res) => {
         company: req.body.company
     }).then(resolve => {
         const myCat = new watchCategory(
-            watch_uid = resolve.id,
             {
+                watch_uid : resolve.id,
                 Casual: req.body.categories.includes('Casual'),
                 Business: req.body.categories.includes('Business'),
                 Occasion: req.body.categories.includes('Occasion'),

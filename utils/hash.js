@@ -7,6 +7,15 @@ const ARGON_CONFIG = {
     parallelism: 1, // Adjust parallelism as needed
 }
 
-exports.verifyPassword = (pass, hashed_pass) => argon.verify(pass, hashed_pass)
+exports.verifyPassword =  (hashed_pass, pass) => new Promise(async (res, rej) => {
+    try {
+        const valid = await argon.verify(hashed_pass,pass);
+        res(valid);
+    }
+    catch (e) {
+        console.error(e);
+        rej(e);
+    }
+})
 
-exports.hashPassword = (rawPass) => argon.hash(rawPass, ARGON_CONFIG);
+exports.hashPassword = (rawPass) => argon.hash(rawPass, );

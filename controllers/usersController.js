@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const fan = require('../models/fan')
 const argon = require("argon2")
-const hashUtils = require("../utils/hash")
+const hashUtils = require("../utils/hash");
 
 const subscribedUsersFilePath = path.resolve("./watchdata.json");
 const fanDetails = ["fan_id", "username", "email", "favourites"]
@@ -11,10 +11,20 @@ exports.authenticateFanDetails = (req, res) => {
   fan.exists({
     username: req.body.username
   }).select('password_hash').then((resp) => {
-    hashUtils.verifyPassword(req.body.password, resp.password_hash).then((resp) => {
+    if (!resp) {
+      return res.sendStatus(401);
+    }
+    hashUtils.verifyPassword(resp.password_hash, req.body.password).then((resp) => {
+      console.log(resp);
+      if (!resp) {
+        return res.sendStatus(401);
+      }
+      req.session.authenticated = true
+      console.log(req.session);
       res.sendStatus(200)
     }).catch(e => {
-      res.sendStatus(402);
+      console.error(e)
+      res.sendStatus(401);
     })
   })
 }
@@ -47,12 +57,11 @@ exports.createFanAccount = (req, res) => {
     if (resp?.length) {
       console.log("FOrbidden");
       res.send(403)
-      return
     }
     hashUtils.hashPassword(req.body.password).then((resp) => {
       fan.create({ ...fanDetails, password_hash: resp }).then((resp) => {
-        res.send(201);
-      })
+        res.sendStatus(201);
+      });
     })
   }).catch(e => {
     console.error(e);
