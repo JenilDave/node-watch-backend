@@ -1,7 +1,7 @@
 const express = require("express");
 
-const { getAllWatches, getWatchDetail, getWatchImage, getWatchCollections, editWatch } = require("../controllers/watchController");
-const { createFanAccount, editFanAccount, getFanDetails, authenticateFanDetails } = require("../controllers/usersController");
+const { getAllWatches, getWatchDetail, getWatchImage, getWatchCollections } = require("../controllers/watchController");
+const { editFanAccount, getFanDetails, userAuthorization } = require("../controllers/usersController");
 
 
 const routes = express.Router();
@@ -12,11 +12,11 @@ routes.get("/favicon", (req, res, next) => {
 });
 
 routes.get("/watches", getAllWatches);
-routes.get("/watch-detail/:watchId", getWatchDetail);
+routes.get("/watch-detail/:watchId", userAuthorization, getWatchDetail);
 routes.get("/watch-image/:watchId", getWatchImage);
 routes.get("/watch-collections", getWatchCollections);
-routes.put("/fan-details/:id", getFanDetails);
-routes.put("/edit-fan/:id", editFanAccount);
+routes.put("/fan-details/:id", userAuthorization, getFanDetails);
+routes.put("/edit-fan/:id", userAuthorization, editFanAccount);
 
 
 exports.routes = routes;

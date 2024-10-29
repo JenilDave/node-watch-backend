@@ -1,10 +1,6 @@
 const fs = require("fs");
-const path = require("path");
 const fan = require('../models/fan')
-const argon = require("argon2")
 const hashUtils = require("../utils/hash");
-
-const subscribedUsersFilePath = path.resolve("./watchdata.json");
 const fanDetails = ["fan_id", "username", "email", "favourites"]
 
 exports.authenticateFanDetails = (req, res) => {
@@ -15,13 +11,13 @@ exports.authenticateFanDetails = (req, res) => {
       return res.sendStatus(401);
     }
     hashUtils.verifyPassword(resp.password_hash, req.body.password).then((resp) => {
-      console.log(resp);
-      if (!resp) {
-        return res.sendStatus(401);
+      if (resp == false) {
+        console.log("Login Attempt::", req.body);
+        return res.sendStatus(404);
       }
-      req.session.authenticated = true
-      console.log(req.session);
-      res.sendStatus(200)
+      hashUtils.generateJwt(req.body.username).then((token) => {
+        res.send(token).status(200)
+      })
     }).catch(e => {
       console.error(e)
       res.sendStatus(401);
@@ -93,5 +89,22 @@ exports.editFanAccount = (req, res) => {
       console.log(resp.fan_id, req.params.id);
       res.sendStatus(403);
     }
+  })
+}
+
+exports.userAuthorization = (req, res, next) => {
+  console.log(req.headers);
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) {
+    return res.sendStatus(401);
+  }
+  hashUtils.verifyJwt(token).then((isVerified) => {
+    if (isVerified) {
+      next();
+    }
+    else res.sendStatus(404);
+  }).catch(e => {
+    res.sendStatus(403);
   })
 }

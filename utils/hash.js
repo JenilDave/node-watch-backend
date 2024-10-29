@@ -1,4 +1,5 @@
 const argon = require('argon2');
+const jwt = require('jsonwebtoken')
 
 const ARGON_CONFIG = {
     type: argon.argon2id, // Use Argon2id variant
@@ -7,15 +8,44 @@ const ARGON_CONFIG = {
     parallelism: 1, // Adjust parallelism as needed
 }
 
-exports.verifyPassword =  (hashed_pass, pass) => new Promise(async (res, rej) => {
+const JWT_SECRET = "TOP_$3CR3T"
+
+exports.verifyPassword = (hashed_pass, pass) => new Promise(async (resolve, reject) => {
     try {
-        const valid = await argon.verify(hashed_pass,pass);
-        res(valid);
+        const valid = await argon.verify(hashed_pass, pass, ARGON_CONFIG);
+        resolve(valid);
     }
     catch (e) {
         console.error(e);
-        rej(e);
+        reject(e);
     }
 })
 
-exports.hashPassword = (rawPass) => argon.hash(rawPass, );
+exports.hashPassword = (rawPass) => argon.hash(rawPass, ARGON_CONFIG);
+
+exports.generateJwt = username => new Promise(async (resolve, reject) => {
+    try {
+        const token = await jwt.sign({
+            userId: username
+        },
+            JWT_SECRET,
+            { expiresIn: '1h' }
+        )
+        resolve(token)
+    }
+    catch (e) {
+        console.error(e);
+        reject(e);
+    }
+})
+
+exports.verifyJwt = (token) => new Promise(async (resolve, reject) => {
+    try {
+        const isVerified = await jwt.verify(token, JWT_SECRET)
+        resolve(isVerified);
+    }
+    catch (e) {
+        console.error(e);
+        reject(e);
+    }
+})
