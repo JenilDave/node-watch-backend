@@ -108,3 +108,46 @@ exports.userAuthorization = (req, res, next) => {
     res.sendStatus(403);
   })
 }
+
+
+exports.userPasswordAuth = (req, res, next) => {
+  fan.exists({
+    username: req.body.username
+  }).select('password_hash').then((resp) => {
+    if (!resp) {
+      return res.sendStatus(401);
+    }
+    hashUtils.verifyPassword(resp.password_hash, req.body.password).then((resp) => {
+      if (resp == false) {
+        console.log("Login Attempt::", req.body);
+        return res.sendStatus(404);
+      }
+      else {
+        next();
+      }
+    }).catch(e => {
+      console.error(e)
+      res.sendStatus(401);
+    })
+  })
+}
+
+exports.resetPassword = (req, res, next) => {
+  if (!req.body.new_password) {
+    return res.sendStatus(403);
+  }
+  hashUtils.hashPassword(req.body.new_password).then((resp) => {
+    fan.findOneAndUpdate(
+      {
+        username: req.body.username
+      },
+      {
+        password_hash: resp
+      }
+    ).then((resp) => {
+      res.sendStatus(201);
+    });
+  }).catch(e => {
+    console.log(e);
+  });
+}

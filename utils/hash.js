@@ -8,7 +8,7 @@ const ARGON_CONFIG = {
     parallelism: 1, // Adjust parallelism as needed
 }
 
-const JWT_SECRET = "TOP_$3CR3T"
+const JWT_SECRET = "TOP_$3CR3T_AND_V3Ry_!M4orT@nt"
 
 exports.verifyPassword = (hashed_pass, pass) => new Promise(async (resolve, reject) => {
     try {
@@ -29,7 +29,7 @@ exports.generateJwt = username => new Promise(async (resolve, reject) => {
             userId: username
         },
             JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '1m' }
         )
         resolve(token)
     }

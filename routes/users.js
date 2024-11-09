@@ -1,7 +1,7 @@
 const express = require("express");
 
 const { getAllWatches, getWatchDetail, getWatchImage, getWatchCollections } = require("../controllers/watchController");
-const { editFanAccount, getFanDetails, userAuthorization } = require("../controllers/usersController");
+const { editFanAccount, getFanDetails, userAuthorization, userPasswordAuth, resetPassword } = require("../controllers/usersController");
 
 
 const routes = express.Router();
@@ -17,6 +17,7 @@ routes.get("/watch-image/:watchId", getWatchImage);
 routes.get("/watch-collections", getWatchCollections);
 routes.put("/fan-details/:id", userAuthorization, getFanDetails);
 routes.put("/edit-fan/:id", userAuthorization, editFanAccount);
+routes.post("/reset_pass", userPasswordAuth, resetPassword);
 
 
 exports.routes = routes;
