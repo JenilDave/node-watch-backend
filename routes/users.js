@@ -18,9 +18,9 @@ routes.get("/watch-collections", getWatchCollections);
 routes.put("/fan-details/:id", userAuthorization, getFanDetails);
 routes.put("/edit-fan/:id", userAuthorization, editFanAccount);
 routes.post("/reset_pass", userPasswordAuth, resetPassword);
-routes.get("/favourites/:username", getFavourites);
-routes.post("/add-favourites", addFavourites);
-routes.post("/remove-favourites", removeFavourites);
+routes.get("/favourites/:username", userAuthorization, getFavourites);
+routes.post("/add-favourites", userAuthorization, addFavourites);
+routes.post("/remove-favourites", userAuthorization, removeFavourites);
 
 
 exports.routes = routes;
