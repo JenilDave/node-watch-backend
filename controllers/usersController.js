@@ -151,3 +151,50 @@ exports.resetPassword = (req, res, next) => {
     console.log(e);
   });
 }
+
+exports.getFavourites = (req, res) => {
+  fan.findOne({
+    username: req.params.username
+  }).then((resp) => {
+    return res.send(resp.favourites).status(200);
+  }).catch(e => {
+    console.error(e);
+    return res.sendStatus(500)
+  })
+}
+
+exports.addFavourites = (req, res) => {
+  fan.findOne({
+    username: req.body.username
+  }).then((resp) => {
+    resp.favourites = [...resp.favourites, req.body.favourite]
+    resp.save().then((resp) => {
+      return res.sendStatus(201)
+    }).catch(e => {
+      console.log("Couldn't Save");
+      console.error(e);
+    })
+  }).catch((e) => {
+    console.log("Problem Encountered while adding new Favourite");
+    console.error(e);
+    return res.sendStatus(500)
+  })
+}
+
+exports.removeFavourites = (req, res) => {
+  fan.findOne({
+    username: req.body.username
+  }).then((resp) => {
+    resp.favourites = resp.favourites.filter((elem) => elem !== req.body.favourite)
+    resp.save().then((resp) => {
+      return res.sendStatus(201)
+    }).catch(e => {
+      console.log("Couldn't Save");
+      console.error(e);
+    })
+  }).catch((e) => {
+    console.log("Problem Encountered while removing Favourite");
+    console.error(e);
+    return res.sendStatus(500)
+  })
+}
